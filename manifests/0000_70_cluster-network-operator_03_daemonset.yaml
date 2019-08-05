@@ -27,8 +27,8 @@ spec:
         env:
         - name: RELEASE_VERSION
           value: "0.0.1-snapshot"
-        - name: NODE_IMAGE
-          value: "quay.io/openshift/origin-node:4.2"
+        - name: SDN_NODE_IMAGE
+          value: "quay.io/openshift/origin-sdn-node:4.2"
         - name: SDN_CONTROLLER_IMAGE
           value: "quay.io/openshift/origin-sdn-controller:4.2"
         - name: KUBE_PROXY_IMAGE

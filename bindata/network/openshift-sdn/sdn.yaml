@@ -39,7 +39,7 @@ spec:
       priorityClassName: system-node-critical
       containers:
       - name: sdn
-        image: {{.NodeImage}}
+        image: {{.SDNNodeImage}}
         command: 
         - /bin/bash
         - -c

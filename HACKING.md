@@ -84,7 +84,7 @@ hack/build-go.sh
 
 ```
 export CLUSTER_DIR=<your cluster directory>
-hack/run-locally.sh -n OpenShiftSDN -m "docker.io/myawesome/origin-node:latest"
+hack/run-locally.sh -n OpenShiftSDN -m "docker.io/myawesome/origin-sdn-node:latest"
 ```
 
 It will print status messages as it waits for the installer to make progress.
