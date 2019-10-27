@@ -149,7 +149,57 @@ func TestFillOpenShiftSDNDefaults(t *testing.T) {
 	fillOpenShiftSDNDefaults(conf, nil, 9000)
 
 	g.Expect(conf).To(Equal(&expected))
+}
 
+func TestFillOpenShiftSDNDefaultsIPv6(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	// vars
+	f := false
+	p := uint32(4789)
+	m := uint32(8930)
+	truth := true
+
+	conf := &operv1.NetworkSpec{
+		ServiceNetwork: []string{"fd02::/112"},
+		ClusterNetwork: []operv1.ClusterNetworkEntry{
+			{
+				CIDR:       "fd01::/48",
+				HostPrefix: 64,
+			},
+		},
+		DefaultNetwork: operv1.DefaultNetworkDefinition{
+			Type: operv1.NetworkTypeOpenShiftSDN,
+		},
+	}
+
+	expected := operv1.NetworkSpec{
+		ServiceNetwork: []string{"fd02::/112"},
+		ClusterNetwork: []operv1.ClusterNetworkEntry{
+			{
+				CIDR:       "fd01::/48",
+				HostPrefix: 64,
+			},
+		},
+		DefaultNetwork: operv1.DefaultNetworkDefinition{
+			Type: operv1.NetworkTypeOpenShiftSDN,
+			OpenShiftSDNConfig: &operv1.OpenShiftSDNConfig{
+				Mode:           operv1.SDNModeNetworkPolicy,
+				VXLANPort:      &p,
+				MTU:            &m,
+				EnableUnidling: &truth,
+			},
+		},
+		DeployKubeProxy: &f,
+		KubeProxyConfig: &operv1.ProxyConfig{
+			BindAddress:    "::",
+			ProxyArguments: map[string]operv1.ProxyArgumentList{},
+		},
+	}
+
+	fillOpenShiftSDNDefaults(conf, nil, 9000)
+
+	g.Expect(conf).To(Equal(&expected))
 }
 
 func TestValidateOpenShiftSDN(t *testing.T) {
