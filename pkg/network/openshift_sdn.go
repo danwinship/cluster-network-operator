@@ -47,11 +47,15 @@ func renderOpenShiftSDN(conf *operv1.NetworkSpec, manifestDir string) ([]*uns.Un
 	data.Data["ClusterNetwork"] = clusterNetwork
 
 	kpcDefaults := map[string]operv1.ProxyArgumentList{
-		"metrics-bind-address":    {"0.0.0.0"},
 		"metrics-port":            {"9101"},
 		"healthz-port":            {"10256"},
 		"proxy-mode":              {"iptables"},
 		"iptables-masquerade-bit": {"0"},
+	}
+	if isIPv6(conf) {
+		kpcDefaults["metrics-bind-address"] = operv1.ProxyArgumentList{"::"}
+	} else {
+		kpcDefaults["metrics-bind-address"] = operv1.ProxyArgumentList{"0.0.0.0"}
 	}
 
 	kpcOverrides := map[string]operv1.ProxyArgumentList{}
@@ -161,7 +165,11 @@ func fillOpenShiftSDNDefaults(conf, previous *operv1.NetworkSpec, hostMTU int) {
 		conf.KubeProxyConfig = &operv1.ProxyConfig{}
 	}
 	if conf.KubeProxyConfig.BindAddress == "" {
-		conf.KubeProxyConfig.BindAddress = "0.0.0.0"
+		if isIPv6(conf) {
+			conf.KubeProxyConfig.BindAddress = "::"
+		} else {
+			conf.KubeProxyConfig.BindAddress = "0.0.0.0"
+		}
 	}
 
 	if conf.KubeProxyConfig.ProxyArguments == nil {
@@ -187,7 +195,13 @@ func fillOpenShiftSDNDefaults(conf, previous *operv1.NetworkSpec, hostMTU int) {
 	// If it's not supplied, we infer it from  the node on which we're running.
 	// However, this can never change, so we always prefer previous.
 	if sc.MTU == nil {
-		var mtu uint32 = uint32(hostMTU) - 50 // 50 byte VXLAN header
+		vxlanOverhead := 50
+		if isIPv6(conf) {
+			// Tunnelled IPv6 needs more overhead room
+			vxlanOverhead = 70
+		}
+
+		var mtu uint32 = uint32(hostMTU - vxlanOverhead)
 		if previous != nil &&
 			previous.DefaultNetwork.Type == operv1.NetworkTypeOpenShiftSDN &&
 			previous.DefaultNetwork.OpenShiftSDNConfig != nil &&
@@ -252,4 +266,9 @@ func clusterNetwork(conf *operv1.NetworkSpec) (string, error) {
 	}
 
 	return string(cnBuf), nil
+}
+
+func isIPv6(conf *operv1.NetworkSpec) bool {
+	_, cidr, _ := net.ParseCIDR(conf.ServiceNetwork[0])
+	return cidr != nil && cidr.IP.To4() == nil
 }

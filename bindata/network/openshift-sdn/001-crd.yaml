@@ -11,24 +11,15 @@ spec:
     singular: clusternetwork
     plural: clusternetworks
   validation:
-    # As compared to ValidateClusterNetwork, this does not validate that:
-    #   - the hostSubnetLengths are valid for their CIDRs
-    #   - the cluster/service networks do not overlap
-    #   - .network and .hostsubnetlength are set if name == 'default'
-    #   - .network and .hostsubnetlength are either unset, or equal to
-    #     .clusterNetworks[0].CIDR and .clusterNetworks[0].hostSubnetLength
     openAPIV3Schema:
       properties:
         network:
           type: string
-          pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/([0-9]|[12][0-9]|3[0-2])$'
         hostsubnetlength:
           type: integer
-          minimum: 2
-          maximum: 30
+          minimum: 0
         serviceNetwork:
           type: string
-          pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/([0-9]|[12][0-9]|3[0-2])$'
         pluginName:
           type: string
         clusterNetworks:
@@ -38,11 +29,9 @@ spec:
             properties:
               CIDR:
                 type: string
-                pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/([0-9]|[12][0-9]|3[0-2])$'
               hostSubnetLength:
                 type: integer
-                minimum: 2
-                maximum: 30
+                minimum: 0
         vxlanPort:
           type: integer
           minimum: 1
@@ -78,11 +67,6 @@ spec:
     singular: hostsubnet
     plural: hostsubnets
   validation:
-    # As compared to ValidateHostSubnet, this does not validate that:
-    #   - .host == .name
-    #   - either .subnet is set or the assign-subnet annotation is present
-    # As compared to ValidateHostSubnetUpdate, this does not validate that:
-    #   - .subnet is not changed on an existing object
     openAPIV3Schema:
       properties:
         host:
@@ -90,20 +74,16 @@ spec:
           pattern: '^[a-z0-9.-]+$'
         hostIP:
           type: string
-          pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
         subnet:
           type: string
-          pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/([0-9]|[12][0-9]|3[0-2])$'
         egressIPs:
           type: array
           items:
             type: string
-            pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
         egressCIDRs:
           type: array
           items:
             type: string
-            pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/([0-9]|[12][0-9]|3[0-2])$'
   additionalPrinterColumns:
   - name: Host
     type: string
@@ -139,9 +119,6 @@ spec:
     singular: netnamespace
     plural: netnamespaces
   validation:
-    # As compared to ValidateNetNamespace, this does not validate that:
-    #   - .netname == .name
-    #   - .netid is not 1-9
     openAPIV3Schema:
       properties:
         netname:
@@ -155,7 +132,6 @@ spec:
           type: array
           items:
             type: string
-            pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
   additionalPrinterColumns:
   - name: NetID
     type: integer
@@ -179,7 +155,6 @@ spec:
     singular: egressnetworkpolicy
     plural: egressnetworkpolicies
   validation:
-    # This should be mostly equivalent to ValidateEgressNetworkPolicy
     openAPIV3Schema:
       properties:
         spec:
@@ -201,7 +176,5 @@ spec:
                     properties:
                       cidrSelector:
                         type: string
-                        pattern: '^(([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/([0-9]|[12][0-9]|3[0-2])$'
                       dnsName:
                         type: string
-                        pattern: '^([A-Za-z0-9-]+\.)*[A-Za-z0-9-]+\.?$'

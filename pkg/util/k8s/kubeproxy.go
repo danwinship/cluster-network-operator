@@ -141,9 +141,9 @@ func (ka *kpcArgs) getAddressAndPort(addressKey, portKey, defaultPort string) st
 
 	if address != "" {
 		if port == "" {
-			return address + ":" + defaultPort
+			return net.JoinHostPort(address, defaultPort)
 		} else {
-			return address + ":" + port
+			return net.JoinHostPort(address, port)
 		}
 	} else if port != "" {
 		return "0.0.0.0:" + port
