@@ -62,7 +62,7 @@ spec:
             -C /ovn-ca/ca-bundle.crt 
         env:
         - name: OVN_LOG_LEVEL
-          value: info 
+          value: dbg
         volumeMounts:
         - mountPath: /etc/openvswitch/
           name: etc-openvswitch
@@ -145,7 +145,7 @@ spec:
                 fi
         env:
         - name: OVN_LOG_LEVEL
-          value: info 
+          value: dbg
         - name: K8S_NODE_IP
           valueFrom:
             fieldRef:
@@ -238,7 +238,7 @@ spec:
                 fi
         env:
         - name: OVN_LOG_LEVEL
-          value: info 
+          value: dbg
         - name: K8S_NODE_IP
           valueFrom:
             fieldRef:
@@ -329,7 +329,7 @@ spec:
             memory: 300Mi
         env:
         - name: OVN_KUBE_LOG_LEVEL
-          value: "4"
+          value: "5"
         - name: OVN_NET_CIDR
           valueFrom:
             configMapKeyRef:
