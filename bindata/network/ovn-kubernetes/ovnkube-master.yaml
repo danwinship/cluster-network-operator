@@ -68,6 +68,12 @@ spec:
             set +o allexport
           fi
 
+          if [[ "${K8S_NODE_IP}" != "{{.OVN_MASTER_IP}}" ]]; then
+            # IPv6 HACK: only come up on node 0
+            sleep 9999999
+            exit 0
+          fi
+
           exec ovn-northd \
             --no-chdir "-vconsole:${OVN_LOG_LEVEL}" -vfile:off \
             --ovnnb-db "{{.OVN_NB_DB_LIST}}" \
@@ -78,6 +84,10 @@ spec:
         env:
         - name: OVN_LOG_LEVEL
           value: dbg
+        - name: K8S_NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         volumeMounts:
         - mountPath: /etc/openvswitch/
           name: etc-openvswitch
@@ -137,6 +147,10 @@ spec:
             --ovn-nb-log="-vconsole:${OVN_LOG_LEVEL} -vfile:off" \
             run_nb_ovsdb
           else
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1779381
+            # Don't even try to start the 2nd and 3rd database instances right now ...
+            sleep 99999999
+
             exec ${OVNCTL_PATH} \
             --db-nb-cluster-local-port={{.OVN_NB_RAFT_PORT}} \
             --db-nb-cluster-remote-port={{.OVN_NB_RAFT_PORT}} \
@@ -262,6 +276,10 @@ spec:
             --ovn-sb-log="-vconsole:${OVN_LOG_LEVEL} -vfile:off" \
             run_sb_ovsdb
           else
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1779381
+            # Don't even try to start the 2nd and 3rd database instances right now ...
+            sleep 99999999
+
             echo "joining cluster at ${MASTER_IP}"
             exec ${OVNCTL_PATH} \
             --db-sb-cluster-local-port={{.OVN_SB_RAFT_PORT}} \
@@ -419,6 +437,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: K8S_NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         ports:
         - name: metrics-port
           containerPort: 9102
