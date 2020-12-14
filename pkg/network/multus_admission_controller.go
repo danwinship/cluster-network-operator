@@ -21,7 +21,7 @@ func renderMultusAdmissonControllerConfig(manifestDir string) ([]*uns.Unstructur
 	data.Data["MultusValidatingWebhookName"] = names.MULTUS_VALIDATING_WEBHOOK
 	data.Data["KubeRBACProxyImage"] = os.Getenv("KUBE_RBAC_PROXY_IMAGE")
 
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/multus-admission-controller"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "multus/admission-controller"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render multus admission controller manifests")
 	}

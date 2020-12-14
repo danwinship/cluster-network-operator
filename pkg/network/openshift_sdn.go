@@ -74,7 +74,7 @@ func renderOpenShiftSDN(conf *operv1.NetworkSpec, manifestDir string) ([]*uns.Un
 	}
 	data.Data["KubeProxyConfig"] = kpc
 
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/openshift-sdn"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network-plugins/openshift-sdn"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render manifests")
 	}

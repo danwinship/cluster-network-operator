@@ -19,7 +19,7 @@ func renderAdditionalNetworksCRD(manifestDir string) ([]*uns.Unstructured, error
 	objs := []*uns.Unstructured{}
 	// render the manifests on disk
 	data := render.MakeRenderData()
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/additional-networks/crd"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "multus/additional-networks/crd"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render additional network manifests")
 	}
@@ -37,7 +37,7 @@ func renderRawCNIConfig(conf *operv1.AdditionalNetworkDefinition, manifestDir st
 	data.Data["AdditionalNetworkName"] = conf.Name
 	data.Data["AdditionalNetworkNamespace"] = conf.Namespace
 	data.Data["AdditionalNetworkConfig"] = conf.RawCNIConfig
-	objs, err = render.RenderDir(filepath.Join(manifestDir, "network/additional-networks/raw"), &data)
+	objs, err = render.RenderDir(filepath.Join(manifestDir, "multus/additional-networks/raw"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render additional network")
 	}
@@ -152,7 +152,7 @@ func renderSimpleMacvlanConfig(conf *operv1.AdditionalNetworkDefinition, manifes
 		}
 	}
 
-	objs, err = render.RenderDir(filepath.Join(manifestDir, "network/additional-networks/simplemacvlan"), &data)
+	objs, err = render.RenderDir(filepath.Join(manifestDir, "multus/additional-networks/simplemacvlan"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render simplemacvlan additional network")
 	}

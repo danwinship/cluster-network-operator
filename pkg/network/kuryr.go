@@ -115,7 +115,7 @@ func renderKuryr(conf *operv1.NetworkSpec, bootstrapResult *bootstrap.BootstrapR
 	// Nodes Network MTU
 	data.Data["NodesNetworkMTU"] = b.NodesNetworkMTU
 
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/kuryr"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network-plugins/kuryr"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render manifests")
 	}

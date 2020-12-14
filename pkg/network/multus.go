@@ -67,7 +67,7 @@ func renderMultusConfig(manifestDir, defaultNetworkType string, useDHCP bool) ([
 	data.Data["DefaultNetworkType"] = defaultNetworkType
 	data.Data["CNIBinDir"] = CNIBinDir
 
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/multus"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "multus/multus"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render multus manifests")
 	}
@@ -86,7 +86,7 @@ func renderNetworkMetricsDaemon(manifestDir string) ([]*uns.Unstructured, error)
 	data.Data["NetworkMetricsImage"] = os.Getenv("NETWORK_METRICS_DAEMON_IMAGE")
 	data.Data["KubeRBACProxyImage"] = os.Getenv("KUBE_RBAC_PROXY_IMAGE")
 
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/network-metrics"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "multus/network-metrics"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render multus admission controller manifests")
 	}

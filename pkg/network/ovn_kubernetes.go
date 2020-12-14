@@ -118,7 +118,7 @@ func renderOVNKubernetes(conf *operv1.NetworkSpec, bootstrapResult *bootstrap.Bo
 		data.Data["EnableIPsec"] = false
 	}
 
-	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network/ovn-kubernetes"), &data)
+	manifests, err := render.RenderDir(filepath.Join(manifestDir, "network-plugins/ovn-kubernetes"), &data)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to render manifests")
 	}
